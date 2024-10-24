@@ -1,0 +1,92 @@
+﻿@page "/login"
+@using BlazeBlog.Models;
+
+<!--//Injection for the OnValidSubmit-->
+@inject NavigationManager NavigationManager 
+
+@if(_isProcessing)
+{
+    <div class="overlay position-fixed "></div>
+    <div class="loading-wrapper position-fixed d-flex justify-content-center align-items-center">
+        <div class="loading-text fs-1 text-white">Logging-in...</div>
+    </div>
+}
+<style type="text/css">
+    .overlay{
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: black;
+        opacity: 0.5;
+        z-index: 2000; /*Bootstrap modal dialog's z-index is 1050*/
+    }    
+
+    .loading-wrapper{
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 2001;
+    }
+</style>
+
+<EditForm Model="_model" OnValidSubmit="LoginAsync">
+    <DataAnnotationsValidator />
+    <div class="conatiner mt-5 d-flex justify-content-center">
+        <div class="card" style="width: 450px">
+            <div class="card-header">
+                <h2>Login</h2>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <InputText @bind-Value="_model.UserName" class="form-control" placeholder="Enter username" />
+                    <ValidationMessage For="()=> _model.UserName" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <InputText typeof="password" @bind-Value="_model.Password" class="form-control" placeholder="Enter password" />
+                    <ValidationMessage For="()=> _model.Password" />
+                </div>
+                
+                @if (!string.IsNullOrWhiteSpace(_error))
+                {
+                    <!--Show error message-->
+                    <p class="text-danger">@_error</p>
+                }
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-success btn-sm">Login</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private LoginModel _model = new();
+
+    //After we clicked login button it should be disable, because it makes an error if aviable and double click it again
+    private bool _isProcessing = false;
+    private string? _error = null;
+
+    private async Task LoginAsync()
+    {
+        _isProcessing = true;
+        _error = null;
+        try
+        {
+            //5second delay
+            await Task.Delay(5000);
+            //throw new Exception("test exception");
+            NavigationManager.NavigateTo("/"); //Navigate home
+
+        }
+        catch (Exception ex)
+        {
+            _isProcessing = false;
+            _error = ex.Message;
+        }
+
+    }
+}

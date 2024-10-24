@@ -1,1 +1,1 @@
-"# BlazeBlog" 
+"# BlazeBlog page" 
